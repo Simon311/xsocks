@@ -55,6 +55,7 @@ void WriteDebugLog(DWORD dwLastError, LPCSTR file, int codeLine, LOG_LEVEL level
 		return;
 
 	//格式化日志
+	//Format the log??
 	TCHAR logContent[ODS_LOG_MAXLENGTH + 1] = {0};
 
 	DWORD dwThreadID = ::GetCurrentThreadId();

@@ -133,6 +133,7 @@ bool CSocksMgr::Proxy( int s,LPSTR user , LPSTR pwd )
 			Thread t;
 
 			//进入纯转发模式
+			//Enter pure forwarding mode?
 			ret = t.Start((LPTHREAD_START_ROUTINE)TCPTunnel,pSvc);
 		}
 
@@ -200,6 +201,7 @@ DWORD WINAPI CSocksMgr::RedirectProc( LPVOID lpParameter )
 		Thread t;
 
 		//进入纯转发模式
+		//Enter pure forwarding mode
 		ret = t.Start((LPTHREAD_START_ROUTINE)TCPTunnel,pSvc);
 
 	} while (FALSE);
@@ -265,7 +267,7 @@ bool CSocksMgr::Begin( LPCSTR ip1, int port1,LPCSTR ip2,int port2)
 
 	if(!Socket::Connect(s,ip1,port1))
 	{
-		errorLog(_T("Connect Faild!"));
+		errorLog(_T("Connect Failed!"));
 		return FALSE;
 	}
 
@@ -311,7 +313,7 @@ bool CSocksMgr::Begin( LPCSTR ip, int port )
 
 	if(!Socket::Connect(s,ip,port))
 	{
-		errorLog(_T("Connect Faild!"));
+		errorLog(_T("Connect Failed!"));
 		return FALSE;
 	}
 
@@ -360,7 +362,7 @@ bool CSocksMgr::Begin( int port )
 		
 		if ( ! Socket::Listen(s ,port))
 		{
-			errorLog(_T("Bind %d faild!"),port);
+			errorLog(_T("Bind %d failed!"),port);
 			break;
 		}
 
@@ -374,7 +376,7 @@ bool CSocksMgr::Begin( int port )
 
 			if (rs == SOCKET_ERROR)
 			{
-				errorLog(_T("Accept faild!"),port);
+				errorLog(_T("Accept failed!"),port);
 				ret = FALSE;
 				break;
 			}

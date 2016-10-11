@@ -234,7 +234,7 @@ bool CTunnel::Begin(int port1,int port2)
 	
 	if ( !ret )
 	{
-		errorLog(_T("Bind faild!"));
+		errorLog(_T("Bind failed!"));
 		return ret;
 	}
 	infoLog(_T("Listening..."));

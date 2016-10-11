@@ -1,12 +1,12 @@
 About
 ---
 
-XSOCKS is a reliable socks5 proxy server for windows and linux.
+XSOCKS is a lightweight Socks5 proxy server for Windows and Linux.
 
-It has support forward and reverse mode.
+It has support for forward and reverse mode.
 
-More information about socks5 : [RFC1928](http://www.ietf.org/rfc/rfc1928.txt "RFC1928")
-Compiler & Install
+More information about Socks5 : [RFC1928](http://www.ietf.org/rfc/rfc1928.txt "RFC1928")
+Compile & Install
 ---
 #####Windows
 	devenv.exe build.sln /rebuild RELEASE

@@ -47,6 +47,7 @@ bool SocksParser::GetRequest( SERVICE_INFO& svc )
 	}
 		
 	//需要连接一个IP
+	//Destination IP?
 	if (buffer[3] == 0x01)
 	{
 		infoLog(_T("THE DESTINATION IP : %d.%d.%d.%d "),\
@@ -62,12 +63,14 @@ bool SocksParser::GetRequest( SERVICE_INFO& svc )
 	}
 
 		//需要连接一个域名
+		//Destination domain name?
 	else if (buffer[3] == 0x03)
 	{
 		int i = 0;
 		int NameSize = buffer[4]&0xff;
 
 		//接收域名
+		//Receive the domain name
 		if (NameSize >= 6)
 			RecvBuf(svc.socket,&buffer[4]+6,NameSize-5);
 
@@ -77,15 +80,17 @@ bool SocksParser::GetRequest( SERVICE_INFO& svc )
 			szName[i] = buffer[i+5];
 
 		szName[i] = 0;
-		infoLog(_T("The disire DomainName : %s"),a2t(szName));
+		infoLog(_T("The desired DomainName : %s"),a2t(szName));
 
 		svr.sin_family = AF_INET;
 
 
 		//请求DNS
+		//DNS Request
 		svr.sin_addr = GetName(szName);
 
 		//如果请求DNS失败
+		//if request fails
 		if (svr.sin_addr.s_addr == 0)
 		{
 			errorLog(_T("QUERY DNS Error"));
@@ -94,7 +99,8 @@ bool SocksParser::GetRequest( SERVICE_INFO& svc )
 
 		i += 5;
 		//接收端口号
-		infoLog(_T("The disire IP :%s"),a2t(inet_ntoa(svr.sin_addr)));
+		//Receive port number
+		infoLog(_T("The desired IP :%s"),a2t(inet_ntoa(svr.sin_addr)));
 
 		RecvBuf(svc.socket,&buffer[i],2);
 
@@ -104,6 +110,7 @@ bool SocksParser::GetRequest( SERVICE_INFO& svc )
 	}
 
 	//设置sockaddr_in
+	//Set sockaddr_in
 	svc.saddr = svr;
 	svc.slocal = svc.socket;
 
@@ -219,6 +226,7 @@ bool SocksParser::UDPResponse( SERVICE_INFO& svc )
 	buffer[nCount] = 0;
 
 	//通过端口判断来源
+	//The source is determined by the port??
 	if (SourceAddr.sin_port == svc.caddr.sin_port)
 	{
 		int nAType = buffer[3];
@@ -226,12 +234,12 @@ bool SocksParser::UDPResponse( SERVICE_INFO& svc )
 
 		if (nAType == 0x01)
 		{
-			infoLog(_T("The disire socket : %d.%d.%d.%d"),buffer[4]&0xff,buffer[5]&0xff,buffer[6]&0xff , buffer[7]&0xff);
+			infoLog(_T("The desired socket : %d.%d.%d.%d"),buffer[4]&0xff,buffer[5]&0xff,buffer[6]&0xff , buffer[7]&0xff);
 
 			desireAddr.sin_addr.s_addr =MAKELONG(MAKEWORD((buffer[4]&0xff),(buffer[5]&0xff)),
 				MAKEWORD((buffer[6]&0xff),(buffer[7]&0xff)));;
 
-			infoLog(_T("The disire socket : %d"),(buffer[8]&0xff)*256 + (unsigned char)buffer[9]);
+			infoLog(_T("The desired socket : %d"),(buffer[8]&0xff)*256 + (unsigned char)buffer[9]);
 			desireAddr.sin_port  = htons((buffer[8]&0xff)*256 + (unsigned char)buffer[9]);
 			nStartPos = 10;
 		}
@@ -245,7 +253,7 @@ bool SocksParser::UDPResponse( SERVICE_INFO& svc )
 
 			szDomainName[i] = 0;
 
-			infoLog(_T("The disire doaminname : %s"),szDomainName);
+			infoLog(_T("The desired DomainName : %s"),szDomainName);
 
 			desireAddr.sin_addr = GetName(szDomainName);
 
@@ -257,14 +265,14 @@ bool SocksParser::UDPResponse( SERVICE_INFO& svc )
 			
 			i += 5;
 
-			infoLog(_T("the disire socket : %d"),(buffer[i]&0xff)*256 + (unsigned char)buffer[i+1]);
+			infoLog(_T("the desired socket : %d"),(buffer[i]&0xff)*256 + (unsigned char)buffer[i+1]);
 
 			desireAddr.sin_port = htons((buffer[i]&0xff)*256 + (unsigned char)buffer[i+1]);
 			nStartPos = i + 2;
 		}
 		else if (nAType == 0x04)
 		{
-			//ipv6 not implement:)
+			//ipv6 not implemented:)
 		}
 		nCount -= nStartPos;
 		sendto(svc.usocket,buffer+nStartPos,nCount,0,(sockaddr*)&desireAddr,sizeof(desireAddr));
@@ -272,6 +280,7 @@ bool SocksParser::UDPResponse( SERVICE_INFO& svc )
 	else
 	{
 		//封装这个消息
+		//Encapsulate the message?
 		infoLog(_T("GOT MESSAGE FROM : %s :%d"),inet_ntoa(SourceAddr.sin_addr),ntohs(SourceAddr.sin_port));
 
 		char reply[1024*4];
@@ -338,9 +347,11 @@ bool SocksParser::Auth(int s,char* username,char* password,bool NeedAuth)
 	replay[0] = 0x05;
 
 	//需要身份认证
+	//Authentication is required
 	if (NeedAuth)
 	{
 		//没有密码
+		//No password
 		if (i == type)
 		{
 			replay[1] = 0xff;
@@ -351,6 +362,7 @@ bool SocksParser::Auth(int s,char* username,char* password,bool NeedAuth)
 		}
 	}
 	//不需要
+	//Not required?
 	else
 	{
 		replay[1] = 0x00;
@@ -358,6 +370,7 @@ bool SocksParser::Auth(int s,char* username,char* password,bool NeedAuth)
 	SendBuf(s,replay,2);
 
 	//只支持密码通信
+	//Only password communication is supported??
 	if (replay[1] == 0xff) 
 		return FALSE;
 

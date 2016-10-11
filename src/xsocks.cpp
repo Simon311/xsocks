@@ -81,6 +81,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	do 
 	{
 		//获取验证账号和密码
+		// Get the authentication account and password
 
 		CMD_MAP::iterator it = cmd.find(_T("-p"));
 		if ( it != cmd.end())
@@ -95,6 +96,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 		//没有参数
+		//There are no parameters
+		
 		if (cmd.size() == 0)
 		{
 			Usage();
@@ -112,6 +115,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #endif
 
 		//反弹模式
+		//Rebound mode??
 		it = cmd.find(_T("-r"));
 
 		if (it != cmd.end())
@@ -153,6 +157,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 
 		//隧道模式
+		//Tunnel mode
 		it = cmd.find(_T("-t"));
 
 		if (it != cmd.end())
@@ -176,6 +181,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 
 		//正向模式
+		//Forward mode
 		it = cmd.find(_T("-l"));
 
 		if (it != cmd.end())
