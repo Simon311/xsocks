@@ -50,10 +50,10 @@ bool SocksParser::GetRequest( SERVICE_INFO& svc )
 	//Destination IP?
 	if (buffer[3] == 0x01)
 	{
-		infoLog(_T("THE DESTINATION IP : %d.%d.%d.%d "),\
+		infoLog(_T("Destination IP : %d.%d.%d.%d "),\
 			buffer[4]&0xff,buffer[5]&0xff,buffer[6]&0xff,buffer[7]&0xff) ;
 
-		infoLog(_T("THE DESTINATION PORT : %d"),((int)buffer[8])*256 + (unsigned char)buffer[9]);
+		infoLog(_T("Destination port : %d"),((int)buffer[8])*256 + (unsigned char)buffer[9]);
 
 		svr.sin_family = AF_INET;
 		svr.sin_port = htons(((int)buffer[8])*256 + (unsigned char)buffer[9]);
@@ -80,7 +80,7 @@ bool SocksParser::GetRequest( SERVICE_INFO& svc )
 			szName[i] = buffer[i+5];
 
 		szName[i] = 0;
-		infoLog(_T("The desired DomainName : %s"),a2t(szName));
+		infoLog(_T("Destination domain : %s"),a2t(szName));
 
 		svr.sin_family = AF_INET;
 
@@ -93,18 +93,18 @@ bool SocksParser::GetRequest( SERVICE_INFO& svc )
 		//if request fails
 		if (svr.sin_addr.s_addr == 0)
 		{
-			errorLog(_T("QUERY DNS Error"));
+			errorLog(_T("DNS Query Error"));
 			return FALSE;
 		}
 
 		i += 5;
 		//接收端口号
 		//Receive port number
-		infoLog(_T("The desired IP :%s"),a2t(inet_ntoa(svr.sin_addr)));
+		infoLog(_T("Destination IP :%s"),a2t(inet_ntoa(svr.sin_addr)));
 
 		RecvBuf(svc.socket,&buffer[i],2);
 
-		infoLog(_T("The destination port : %d"),(buffer[i]&0xff)*256 + (unsigned char)buffer[i+1]);
+		infoLog(_T("Destination port : %d"),(buffer[i]&0xff)*256 + (unsigned char)buffer[i+1]);
 
 		svr.sin_port = htons((buffer[i]&0xff)*256 + (unsigned char)buffer[i+1]);
 	}
@@ -230,16 +230,16 @@ bool SocksParser::UDPResponse( SERVICE_INFO& svc )
 	if (SourceAddr.sin_port == svc.caddr.sin_port)
 	{
 		int nAType = buffer[3];
-		infoLog(_T("The address type : %d " ),nAType);
+		infoLog(_T("Address type : %d " ),nAType);
 
 		if (nAType == 0x01)
 		{
-			infoLog(_T("The desired socket : %d.%d.%d.%d"),buffer[4]&0xff,buffer[5]&0xff,buffer[6]&0xff , buffer[7]&0xff);
+			infoLog(_T("Destination socket : %d.%d.%d.%d"),buffer[4]&0xff,buffer[5]&0xff,buffer[6]&0xff , buffer[7]&0xff);
 
 			desireAddr.sin_addr.s_addr =MAKELONG(MAKEWORD((buffer[4]&0xff),(buffer[5]&0xff)),
 				MAKEWORD((buffer[6]&0xff),(buffer[7]&0xff)));;
 
-			infoLog(_T("The desired socket : %d"),(buffer[8]&0xff)*256 + (unsigned char)buffer[9]);
+			infoLog(_T("Destination socket : %d"),(buffer[8]&0xff)*256 + (unsigned char)buffer[9]);
 			desireAddr.sin_port  = htons((buffer[8]&0xff)*256 + (unsigned char)buffer[9]);
 			nStartPos = 10;
 		}
@@ -253,7 +253,7 @@ bool SocksParser::UDPResponse( SERVICE_INFO& svc )
 
 			szDomainName[i] = 0;
 
-			infoLog(_T("The desired DomainName : %s"),szDomainName);
+			infoLog(_T("Destination domain : %s"),szDomainName);
 
 			desireAddr.sin_addr = GetName(szDomainName);
 
@@ -265,7 +265,7 @@ bool SocksParser::UDPResponse( SERVICE_INFO& svc )
 			
 			i += 5;
 
-			infoLog(_T("the desired socket : %d"),(buffer[i]&0xff)*256 + (unsigned char)buffer[i+1]);
+			infoLog(_T("Destination socket : %d"),(buffer[i]&0xff)*256 + (unsigned char)buffer[i+1]);
 
 			desireAddr.sin_port = htons((buffer[i]&0xff)*256 + (unsigned char)buffer[i+1]);
 			nStartPos = i + 2;
@@ -301,7 +301,7 @@ bool SocksParser::UDPResponse( SERVICE_INFO& svc )
 			reply[0] = reply[1] = reply[2] = 0;
 			reply[3] = 0x03;
 			std::string strDomainName = m_dns[std::string(inet_ntoa(SourceAddr.sin_addr))];
-			infoLog(_T("The domain name : %s"), strDomainName.c_str() );
+			infoLog(_T("Domain name : %s"), strDomainName.c_str() );
 
 			reply[4] = strDomainName.size();
 			for (UINT i = 0;i < strDomainName.size();++i)
